@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maaş Bordro Hesaplama</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Çalışan Maaş Hesaplama</h1>
+        
+        <form id="bordroForm">
+            <!-- Çalışan Bilgileri -->
+            <div class="form-section">
+                <h3>Kişisel Bilgiler</h3>
+                <div class="form-group">
+                    <label for="name">Adınız Soyadınız:</label>
+                    <input type="text" id="name" required placeholder="Ad Soyad">
+                </div>
+                
+                <div class="form-group">
+                    <label for="isRetired">Emekli Çalışan mısınız?</label>
+                    <select id="isRetired">
+                        <option value="no" selected>Hayır</option>
+                        <option value="yes">Evet - Emekli Çalışanım</option>
+                    </select>
+                    <small>Emekli çalışanlar için SGK işçi payı %7'dir ve tüm devamsızlıklar ücretsiz izin sayılır.</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="period">Bordro Dönemi:</label>
+                    <input type="month" id="period" required>
+                </div>
+            </div>
+            
+            <!-- Temel Bilgiler - İşçi Tarafından Bilinecek Veriler -->
+            <div class="form-section">
+                <h3>Ücret Bilgileri</h3>
+                
+                <div class="form-group">
+                    <label for="hourlyRate">Saat Ücretiniz (TL):</label>
+                    <input type="number" id="hourlyRate" required min="0" step="0.01" placeholder="Örn: 296.51">
+                </div>
+                
+                <div class="form-group">
+                    <label for="workHours">Normal Çalışma Saati (Aylık):</label>
+                    <input type="number" id="workHours" value="225" min="0" max="300" step="0.5" placeholder="Örn: 225">
+                    <small>Normal şartlarda aylık çalışma saati 225 saattir (30 gün × 7.5 saat).</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="weekendHours">Hafta Sonu Çalışma Saati:</label>
+                    <input type="number" id="weekendHours" value="30" min="0" max="60" step="0.5" placeholder="Örn: 30">
+                </div>
+                
+                <div class="form-group">
+                    <label for="nightShiftHours">Gece Çalışma Saati:</label>
+                    <input type="number" id="nightShiftHours" value="85" min="0" max="200" step="0.5" placeholder="Örn: 85">
+                    <small>Gece çalışma tazminatı, saat ücretinizin %10'u olarak ödenir. Yaklaşık değer 85 saattir.</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="taxRate">Gelir Vergisi Oranınız (%):</label>
+                    <input type="number" id="taxRate" value="15" min="0" max="40" step="0.1" placeholder="Örn: 15">
+                    <small>Genel olarak %15, %20, %27, %35 veya %40 olabilir.</small>
+                </div>
+            </div>
+            
+            <!-- Vergi Bilgileri -->
+            <div class="form-section">
+                <h3>Vergi Bilgileri</h3>
+                
+                <div class="form-group">
+                    <label for="cumulativeIncome">Yıl İçinde Önceki Aylarda Kazanılan Brüt Gelir Toplamı (TL):</label>
+                    <input type="number" id="cumulativeIncome" value="0" min="0" step="0.01" placeholder="Örn: 104000">
+                    <small>Ocak ayı için 0, sonraki aylar için önceki ayların brüt kazanç toplamını giriniz.</small>
+                </div>
+                
+                <div class="info-box">
+                    <h4>2025 Gelir Vergisi Tarifesi</h4>
+                    <ul>
+                        <li>158.000 TL'ye kadar: %15 vergi oranı</li>
+                        <li>158.000 TL ve 330.000 TL arası: %20 vergi oranı</li>
+                        <li>330.000 TL ve 1.200.000 TL arası: %27 vergi oranı</li>
+                        <li>1.200.000 TL ve 4.300.000 TL arası: %35 vergi oranı</li>
+                        <li>4.300.000 TL ve üstü: %40 vergi oranı</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Devamsızlık Bilgileri -->
+            <div class="form-section" id="absenceSection">
+                <h3>Devamsızlık ve İzin Bilgileri</h3>
+                
+                <div class="form-group">
+                    <label for="annualLeave">Yıllık İzin (Gün):</label>
+                    <input type="number" id="annualLeave" value="0" min="0" max="30" step="0.5" placeholder="Örn: 5">
+                    <small>Yıllık izin devamsızlık olarak değerlendirilmez, ücret tam ödenir.</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="unpaidLeave">Ücretsiz İzin (Gün):</label>
+                    <input type="number" id="unpaidLeave" value="0" min="0" max="30" step="0.5" placeholder="Örn: 3.5">
+                </div>
+                
+                <div class="form-group">
+                    <label for="absence">Devamsızlık (Gün):</label>
+                    <input type="number" id="absence" value="0" min="0" max="30" step="0.5" placeholder="Örn: 0">
+                </div>
+                
+                <div class="form-group">
+                    <label for="sickLeave">Raporlu / Hastalık İzni (Gün):</label>
+                    <input type="number" id="sickLeave" value="0" min="0" max="30" step="0.5" placeholder="Örn: 0">
+                </div>
+                
+                <div id="retiredAbsenceWarning" class="warning-message hidden">
+                    <p><strong>Not:</strong> Emekli çalışanlarda (yıllık izin hariç) tüm devamsızlıklar ücretsiz izin olarak hesaplanır.</p>
+                </div>
+            </div>
+            
+            <!-- Avans ve Özel Kesintiler -->
+            <div class="form-section">
+                <h3>Avans ve Ek Bilgiler</h3>
+                
+                <div class="form-group">
+                    <label for="advance">Aldığınız Avans (TL):</label>
+                    <input type="number" id="advance" value="0" min="0" step="0.01" placeholder="Örn: 5000">
+                </div>
+                
+                <div class="form-group">
+                    <label for="childCount">Bakmakla Yükümlü Olduğunuz Çocuk Sayısı:</label>
+                    <input type="number" id="childCount" value="0" min="0" max="10" step="1" placeholder="Örn: 2">
+                </div>
+                
+                <div class="form-group">
+                    <label for="overtime">Fazla Mesai Saati (Bu Ay):</label>
+                    <input type="number" id="overtime" value="0" min="0" step="0.5" placeholder="Örn: 10">
+                    <small>Fazla mesai için ücretinizin iki katı ödenir.</small>
+                </div>
+            </div>
+            
+            <!-- Ek Bilgiler - Gelişmiş Ayarlar -->
+            <div class="form-section collapsible">
+                <h3>Gelişmiş Ayarlar (İsteğe Bağlı) <span class="toggle-icon">▼</span></h3>
+                <div class="collapsible-content hidden">
+                    <div class="form-group" id="sgkRateGroup">
+                        <label for="sgkEmployeeRate">SGK İşçi Payı (%):</label>
+                        <input type="number" id="sgkEmployeeRate" value="14" min="0" max="20" step="0.01">
+                        <small id="sgkRateInfo">Normal çalışan için SGK işçi payı %14'tür.</small>
+                    </div>
+                    
+                    <div class="form-group" id="unemploymentRateGroup">
+                        <label for="unemploymentEmployeeRate">İşsizlik Sigortası İşçi Payı (%):</label>
+                        <input type="number" id="unemploymentEmployeeRate" value="1" min="0" max="5" step="0.01">
+                        <small id="unemploymentRateInfo">Emekli çalışanlar için işsizlik sigortası kesilmez.</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="stampTaxRate">Damga Vergisi Oranı (%):</label>
+                        <input type="number" id="stampTaxRate" value="0.759" min="0" max="5" step="0.001">
+                        <small>Yüzde olarak giriniz. Örneğin, %0.759 için 0.759 yazınız.</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="unionFeeEnabled">Sendika Aidatı:</label>
+                        <select id="unionFeeEnabled">
+                            <option value="yes" selected>Var - Bir Günlük Ücret</option>
+                            <option value="no">Yok</option>
+                        </select>
+                        <small>Sendika aidatı, bir günlük ücrete eşittir (7.5 saat × saat ücreti).</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="calculateProgressiveTax">İlerleyen Vergi Hesaplama:</label>
+                        <select id="calculateProgressiveTax">
+                            <option value="yes" selected>Evet - Vergi Dilimlerini Otomatik Hesapla</option>
+                            <option value="no">Hayır - Sabit Vergi Oranı Kullan</option>
+                        </select>
+                        <small>Sabit vergi oranı tercih ederseniz, tek vergi oranıyla hesaplanır.</small>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" class="calculate-btn">Maaş Bordrosu Hesapla</button>
+        </form>
+        
+        <div id="result" class="result-container hidden">
+            <h2>Maaş Bordro Sonucu</h2>
+            <div id="resultContent"></div>
+            <button id="printBtn" class="print-btn">Yazdır</button>
+            <button id="newCalculation" class="calculate-btn">Yeni Hesaplama</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
