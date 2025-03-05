@@ -270,6 +270,45 @@ document.addEventListener('DOMContentLoaded', () => {
         // Generate tax breakdown HTML if we're using progressive tax
         let taxBreakdownHTML = '';
         if (useProgressiveTax && taxDetails && taxDetails.length > 0) {
+            // Calculate which tax bracket the employee will be in next month
+            const totalCumulativeIncomeAfterThisMonth = cumulativeIncome + taxBase;
+            let nextMonthBracket = "1. dilim (%15)";
+            let nextMonthBracketRate = 15;
+            let nextBracketIndex = 0; // Track current bracket index
+            
+            // Determine which tax bracket they'll be in next month
+            if (totalCumulativeIncomeAfterThisMonth >= taxBrackets[3].limit) {
+                nextMonthBracket = "5. dilim (%40)";
+                nextMonthBracketRate = 40;
+                nextBracketIndex = 4; // Last bracket
+            } else if (totalCumulativeIncomeAfterThisMonth >= taxBrackets[2].limit) {
+                nextMonthBracket = "4. dilim (%35)";
+                nextMonthBracketRate = 35;
+                nextBracketIndex = 3;
+            } else if (totalCumulativeIncomeAfterThisMonth >= taxBrackets[1].limit) {
+                nextMonthBracket = "3. dilim (%27)";
+                nextMonthBracketRate = 27;
+                nextBracketIndex = 2;
+            } else if (totalCumulativeIncomeAfterThisMonth >= taxBrackets[0].limit) {
+                nextMonthBracket = "2. dilim (%20)";
+                nextMonthBracketRate = 20;
+                nextBracketIndex = 1;
+            } else {
+                nextBracketIndex = 0;
+            }
+            
+            // Calculate how much more income until the next tax bracket (if not already at highest)
+            let nextBracketInfo = "";
+            if (nextBracketIndex < 4) { // If not in the highest bracket
+                // Get the NEXT bracket's threshold and rate
+                const nextBracketThreshold = taxBrackets[nextBracketIndex].limit;
+                const nextBracketRate = taxBrackets[nextBracketIndex + 1].rate;
+                const amountUntilNextBracket = nextBracketThreshold - totalCumulativeIncomeAfterThisMonth;
+                const nextBracketRatePercent = (nextBracketRate * 100).toFixed(0);
+                
+                nextBracketInfo = `<p>Bir sonraki vergi dilimine (${nextBracketRatePercent}%) girmek için kalan matrah: <strong>${formatMoney(amountUntilNextBracket)} TL</strong></p>`;
+            }
+            
             taxBreakdownHTML = `
                 <div class="tax-details">
                     <h4>Gelir Vergisi Hesabı</h4>
@@ -279,6 +318,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p><strong>Gelir Vergisi Matrahı:</strong> ${formatMoney(taxBase)} TL</p>
                     <p>Yıl içi toplam vergi matrahı (önceki aylar): ${formatMoney(cumulativeIncome)} TL</p>
                     <p>Bu ayın sonundaki toplam vergi matrahı: ${formatMoney(cumulativeIncome + taxBase)} TL</p>
+                    <p><strong>Gelecek ay başlangıcındaki vergi diliminiz:</strong> ${nextMonthBracket}</p>
+                    ${nextBracketInfo}
                     
                     <table class="tax-breakdown">
                         <thead>
