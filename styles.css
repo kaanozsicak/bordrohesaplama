@@ -743,6 +743,28 @@ input[type="number"] {
         margin-bottom: 10px;
     }
     
+    /* Hide the label for the summary row completely */    
+    .tax-breakdown .summary-row td[colspan]:before {
+        display: none; /* Hide the data-label completely instead of overriding it */
+    }
+    
+    /* Style the summary row nicely */
+    .tax-breakdown .summary-row td {
+        background-color: rgba(58, 110, 165, 0.15);
+        font-weight: 700;
+        text-align: center;
+        padding: 12px 8px;
+    }
+    
+    .tax-breakdown .summary-row td:not([colspan]) {
+        text-align: right;
+        padding-right: 12px;
+    }
+    
+    .tax-breakdown .summary-row td:not([colspan]):before {
+        display: none; /* Hide the label for total value cell too */
+    }
+    
     /* Hide unused data-label for summary row */
     .tax-breakdown .summary-row td[colspan]:before {
         content: "Toplam Gelir Vergisi";
