@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function calculateSalary() {
         // Get basic employee information
-        const name = document.getElementById('name').value;
+        const name = document.getElementById('name').value || 'Anonim Çalışan';
         const hourlyRate = parseFloat(document.getElementById('hourlyRate').value);
         const workDays = parseFloat(document.getElementById('workDays').value);
         const weekendHours = parseFloat(document.getElementById('weekendHours').value) || 0;

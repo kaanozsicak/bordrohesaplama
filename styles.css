@@ -241,6 +241,7 @@ table tr:hover {
 @media (max-width: 768px) {
     body {
         padding: 15px;
+        background-image: linear-gradient(120deg, rgba(58, 110, 165, 0.05) 0%, rgba(0, 78, 152, 0.05) 100%);
     }
     
     .container {
@@ -609,14 +610,26 @@ small {
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
+    appearance: none;
     margin: 0;
 }
 
 input[type="number"] {
     -moz-appearance: textfield;
+    appearance: textfield;
 }
 
-/* Add these new rules at the bottom of the file */
+/* Optional field styling */
+.optional {
+    display: inline;
+    font-weight: normal;
+    color: var(--light-text);
+    font-style: italic;
+    font-size: 0.8rem;
+    margin-left: 5px;
+}
+
+/* Add container hover effect */
 @media (prefers-reduced-motion: no-preference) {
     .container {
         transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -627,18 +640,10 @@ input[type="number"] {
     }
 }
 
-/* For very large screens, add a max-width to body to center the content better */
+/* For very large screens */
 @media (min-width: 1400px) {
     body {
         max-width: 1400px;
         margin: 0 auto;
-    }
-}
-
-/* For mobile screens enhance readability */
-@media (max-width: 768px) {
-    body {
-        background-image: linear-gradient(120deg, rgba(58, 110, 165, 0.05) 0%, rgba(0, 78, 152, 0.05) 100%);
-        padding: 10px;
     }
 }
