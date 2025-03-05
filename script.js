@@ -153,6 +153,18 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
     
+    // Add this function before calculateSalary function to help with mobile table formatting:
+    function createTableRow(cells) {
+        // Create a row with proper data-label attributes for mobile
+        return `<tr>${cells}</tr>`;
+    }
+
+    // Add a helper function to create table cells with data-label attributes
+    function createTableCell(label, content, isHeader = false) {
+        const tag = isHeader ? 'th' : 'td';
+        return `<${tag} data-label="${label}">${content}</${tag}>`;
+    }
+
     function calculateSalary() {
         // Get basic employee information
         const name = document.getElementById('name').value || 'Anonim Çalışan';
@@ -376,124 +388,132 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="salary-section income-section">
                 <h4>GELİRLER</h4>
                 <table>
-                    <tr>
-                        <th>Tanım</th>
-                        <th>Gün / Saat / Adet</th>
-                        <th>Tutar (TL)</th>
-                    </tr>
-                    <tr>
-                        <td>Normal Çalışma</td>
-                        <td>${(actualWorkHours / dailyWorkHours).toFixed(2)} gün (${actualWorkHours.toFixed(2)} saat)</td>
-                        <td>${formatMoney(baseSalary)}</td>
-                    </tr>
-                    ${annualLeave > 0 ? `
-                    <tr>
-                        <td>Yıllık İzin</td>
-                        <td>${annualLeave.toFixed(2)} gün (${annualLeaveHours.toFixed(2)} saat)</td>
-                        <td>${formatMoney(annualLeavePay)}</td>
-                    </tr>
-                    ` : ''}
-                    ${weekendHours > 0 ? `
-                    <tr>
-                        <td>Hafta Sonu Çalışma</td>
-                        <td>${weekendHours.toFixed(2)} saat</td>
-                        <td>${formatMoney(weekendPay)}</td>
-                    </tr>
-                    ` : ''}
-                    ${overtime > 0 ? `
-                    <tr>
-                        <td>Fazla Mesai (2x)</td>
-                        <td>${overtime.toFixed(2)} saat</td>
-                        <td>${formatMoney(overtimePay)}</td>
-                    </tr>
-                    ` : ''}
-                    <tr>
-                        <td>Gece Çalışma Tazminatı</td>
-                        <td>${nightShiftHours.toFixed(2)} saat</td>
-                        <td>${formatMoney(nightShiftPay)}</td>
-                    </tr>
-                    <tr>
-                        <td>İkramiye</td>
-                        <td>${bonusHours} saat</td>
-                        <td>${formatMoney(bonusPay)}</td>
-                    </tr>
-                    ${childCount > 0 ? `
-                    <tr>
-                        <td>Çocuk Yardımı</td>
-                        <td>${childCount} çocuk</td>
-                        <td>${formatMoney(childSupportTotal)}</td>
-                    </tr>
-                    ` : ''}
-                    <tr>
-                        <td>Yakacak Yardımı</td>
-                        <td></td>
-                        <td>${formatMoney(heatingAllowance)}</td>
-                    </tr>
-                    <tr>
-                        <td>Özel Sağlık BE</td>
-                        <td></td>
-                        <td>${formatMoney(healthBenefit)}</td>
-                    </tr>
-                    <tr class="total-row">
-                        <td colspan="2">TOPLAM BRÜT GELİR</td>
-                        <td>${formatMoney(monthlyGrossIncome)}</td>
-                    </tr>
+                    <thead>
+                        <tr>
+                            <th>Tanım</th>
+                            <th>Gün / Saat / Adet</th>
+                            <th>Tutar (TL)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-label="Tanım">Normal Çalışma</td>
+                            <td data-label="Gün / Saat / Adet">${(actualWorkHours / dailyWorkHours).toFixed(2)} gün (${actualWorkHours.toFixed(2)} saat)</td>
+                            <td data-label="Tutar (TL)">${formatMoney(baseSalary)}</td>
+                        </tr>
+                        ${annualLeave > 0 ? `
+                        <tr>
+                            <td data-label="Tanım">Yıllık İzin</td>
+                            <td data-label="Gün / Saat / Adet">${annualLeave.toFixed(2)} gün (${annualLeaveHours.toFixed(2)} saat)</td>
+                            <td data-label="Tutar (TL)">${formatMoney(annualLeavePay)}</td>
+                        </tr>
+                        ` : ''}
+                        ${weekendHours > 0 ? `
+                        <tr>
+                            <td data-label="Tanım">Hafta Sonu Çalışma</td>
+                            <td data-label="Gün / Saat / Adet">${weekendHours.toFixed(2)} saat</td>
+                            <td data-label="Tutar (TL)">${formatMoney(weekendPay)}</td>
+                        </tr>
+                        ` : ''}
+                        ${overtime > 0 ? `
+                        <tr>
+                            <td data-label="Tanım">Fazla Mesai (2x)</td>
+                            <td data-label="Gün / Saat / Adet">${overtime.toFixed(2)} saat</td>
+                            <td data-label="Tutar (TL)">${formatMoney(overtimePay)}</td>
+                        </tr>
+                        ` : ''}
+                        <tr>
+                            <td data-label="Tanım">Gece Çalışma Tazminatı</td>
+                            <td data-label="Gün / Saat / Adet">${nightShiftHours.toFixed(2)} saat</td>
+                            <td data-label="Tutar (TL)">${formatMoney(nightShiftPay)}</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Tanım">İkramiye</td>
+                            <td data-label="Gün / Saat / Adet">${bonusHours} saat</td>
+                            <td data-label="Tutar (TL)">${formatMoney(bonusPay)}</td>
+                        </tr>
+                        ${childCount > 0 ? `
+                        <tr>
+                            <td data-label="Tanım">Çocuk Yardımı</td>
+                            <td data-label="Gün / Saat / Adet">${childCount} çocuk</td>
+                            <td data-label="Tutar (TL)">${formatMoney(childSupportTotal)}</td>
+                        </tr>
+                        ` : ''}
+                        <tr>
+                            <td data-label="Tanım">Yakacak Yardımı</td>
+                            <td data-label="Gün / Saat / Adet"></td>
+                            <td data-label="Tutar (TL)">${formatMoney(heatingAllowance)}</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Tanım">Özel Sağlık BE</td>
+                            <td data-label="Gün / Saat / Adet"></td>
+                            <td data-label="Tutar (TL)">${formatMoney(healthBenefit)}</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td colspan="2" data-label="Toplam">TOPLAM BRÜT GELİR</td>
+                            <td data-label="Tutar (TL)">${formatMoney(monthlyGrossIncome)}</td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
             
             <div class="salary-section deduction-section">
                 <h4>KESİNTİLER</h4>
                 <table>
-                    <tr>
-                        <th>Tanım</th>
-                        <th>Oran/Açıklama</th>
-                        <th>Tutar (TL)</th>
-                    </tr>
-                    <tr>
-                        <td>SGK İşçi Payı</td>
-                        <td>%${(sgkEmployeeRate * 100).toFixed(2)} ${isRetired ? '(Emekli)' : ''}</td>
-                        <td>-${formatMoney(sgkEmployeeDeduction)}</td>
-                    </tr>
-                    ${!isRetired ? `
-                    <tr>
-                        <td>İşsizlik Sigortası İşçi Payı</td>
-                        <td>%${(unemploymentEmployeeRate * 100).toFixed(2)}</td>
-                        <td>-${formatMoney(unemploymentEmployeeDeduction)}</td>
-                    </tr>
-                    ` : ''}
-                    <tr>
-                        <td>Gelir Vergisi</td>
-                        <td>${useProgressiveTax ? `Kademeli (Efektif: %${(effectiveTaxRate * 100).toFixed(2)})` : `%${(taxRate * 100).toFixed(2)}`}</td>
-                        <td>-${formatMoney(incomeTax)}</td>
-                    </tr>
-                    <tr>
-                        <td>Damga Vergisi</td>
-                        <td>%${(stampTaxRate * 100).toFixed(3)}</td>
-                        <td>-${formatMoney(stampTax)}</td>
-                    </tr>
-                    <tr>
-                        <td>Özel Sağlık BE</td>
-                        <td>İade</td>
-                        <td>-${formatMoney(healthBenefit)}</td>
-                    </tr>
-                    ${advance > 0 ? `
-                    <tr>
-                        <td>Avans</td>
-                        <td></td>
-                        <td>-${formatMoney(advance)}</td>
-                    </tr>
-                    ` : ''}
-                    ${unionFeeEnabled ? `
-                    <tr>
-                        <td>Sendika Aidatı</td>
-                        <td>Bir günlük ücret (7.5 saat)</td>
-                        <td>-${formatMoney(unionFee)}</td>
-                    </tr>
-                    ` : ''}
-                    <tr class="total-row">
-                        <td colspan="2">TOPLAM KESİNTİLER</td>
-                        <td>-${formatMoney(totalDeductions)}</td>
-                    </tr>
+                    <thead>
+                        <tr>
+                            <th>Tanım</th>
+                            <th>Oran/Açıklama</th>
+                            <th>Tutar (TL)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-label="Tanım">SGK İşçi Payı</td>
+                            <td data-label="Oran/Açıklama">%${(sgkEmployeeRate * 100).toFixed(2)} ${isRetired ? '(Emekli)' : ''}</td>
+                            <td data-label="Tutar (TL)">-${formatMoney(sgkEmployeeDeduction)}</td>
+                        </tr>
+                        ${!isRetired ? `
+                        <tr>
+                            <td data-label="Tanım">İşsizlik Sigortası İşçi Payı</td>
+                            <td data-label="Oran/Açıklama">%${(unemploymentEmployeeRate * 100).toFixed(2)}</td>
+                            <td data-label="Tutar (TL)">-${formatMoney(unemploymentEmployeeDeduction)}</td>
+                        </tr>
+                        ` : ''}
+                        <tr>
+                            <td data-label="Tanım">Gelir Vergisi</td>
+                            <td data-label="Oran/Açıklama">${useProgressiveTax ? `Kademeli (Efektif: %${(effectiveTaxRate * 100).toFixed(2)})` : `%${(taxRate * 100).toFixed(2)}`}</td>
+                            <td data-label="Tutar (TL)">-${formatMoney(incomeTax)}</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Tanım">Damga Vergisi</td>
+                            <td data-label="Oran/Açıklama">%${(stampTaxRate * 100).toFixed(3)}</td>
+                            <td data-label="Tutar (TL)">-${formatMoney(stampTax)}</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Tanım">Özel Sağlık BE</td>
+                            <td data-label="Oran/Açıklama">İade</td>
+                            <td data-label="Tutar (TL)">-${formatMoney(healthBenefit)}</td>
+                        </tr>
+                        ${advance > 0 ? `
+                        <tr>
+                            <td data-label="Tanım">Avans</td>
+                            <td data-label="Oran/Açıklama"></td>
+                            <td data-label="Tutar (TL)">-${formatMoney(advance)}</td>
+                        </tr>
+                        ` : ''}
+                        ${unionFeeEnabled ? `
+                        <tr>
+                            <td data-label="Tanım">Sendika Aidatı</td>
+                            <td data-label="Oran/Açıklama">Bir günlük ücret (7.5 saat)</td>
+                            <td data-label="Tutar (TL)">-${formatMoney(unionFee)}</td>
+                        </tr>
+                        ` : ''}
+                        <tr class="total-row">
+                            <td colspan="2" data-label="Toplam">TOPLAM KESİNTİLER</td>
+                            <td data-label="Tutar (TL)">-${formatMoney(totalDeductions)}</td>
+                        </tr>
+                    </tbody>
                 </table>
                 
                 ${taxBreakdownHTML}
@@ -502,85 +522,93 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="salary-section summary-section">
                 <h4>ÖZET</h4>
                 <table>
-                    <tr>
-                        <th>Tanım</th>
-                        <th>Tutar (TL)</th>
-                    </tr>
-                    <tr>
-                        <td>Toplam Brüt Gelir</td>
-                        <td>${formatMoney(monthlyGrossIncome)}</td>
-                    </tr>
-                    <tr>
-                        <td>Toplam Kesintiler</td>
-                        <td>-${formatMoney(totalDeductions)}</td>
-                    </tr>
-                    <tr class="grand-total">
-                        <td><strong>NET ÖDENEN</strong></td>
-                        <td><strong>${formatMoney(netSalary)}</strong></td>
-                    </tr>
+                    <thead>
+                        <tr>
+                            <th>Tanım</th>
+                            <th>Tutar (TL)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-label="Tanım">Toplam Brüt Gelir</td>
+                            <td data-label="Tutar (TL)">${formatMoney(monthlyGrossIncome)}</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Tanım">Toplam Kesintiler</td>
+                            <td data-label="Tutar (TL)">-${formatMoney(totalDeductions)}</td>
+                        </tr>
+                        <tr class="grand-total">
+                            <td data-label="Tanım"><strong>NET ÖDENEN</strong></td>
+                            <td data-label="Tutar (TL)"><strong>${formatMoney(netSalary)}</strong></td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
             
             <div class="absence-section">
                 <h4>DEVAMSIZLIK VE İZİN BİLGİLERİ</h4>
                 <table>
-                    <tr>
-                        <th>İzin Türü</th>
-                        <th>Gün</th>
-                    </tr>
-                    ${annualLeave > 0 ? `
-                    <tr>
-                        <td>Yıllık İzin</td>
-                        <td>${annualLeave}</td>
-                    </tr>
-                    ` : ''}
-                    ${unpaidLeave > 0 ? `
-                    <tr>
-                        <td>Ücretsiz İzin</td>
-                        <td>${unpaidLeave}</td>
-                    </tr>
-                    ` : ''}
-                    ${effectiveUnpaidLeave > unpaidLeave ? `
-                    <tr>
-                        <td>Toplam Ücretsiz İzin Etkisi</td>
-                        <td>${effectiveUnpaidLeave}</td>
-                    </tr>
-                    <tr>
-                        <td>Çalışılan Gün</td>
-                        <td>${workDaysAfterUnpaidLeave} (${workDays} - ${effectiveUnpaidLeave})</td>
-                    </tr>
-                    ` : effectiveUnpaidLeave > 0 ? `
-                    <tr>
-                        <td>Çalışılan Gün</td>
-                        <td>${workDaysAfterUnpaidLeave} (${workDays} - ${effectiveUnpaidLeave})</td>
-                    </tr>
-                    ` : ''}
-                    ${!isRetired && absence > 0 ? `
-                    <tr>
-                        <td>Devamsızlık</td>
-                        <td>${absence}</td>
-                    </tr>
-                    ` : ''}
-                    ${!isRetired && sickLeave > 0 ? `
-                    <tr>
-                        <td>Raporlu / Hastalık İzni</td>
-                        <td>${sickLeave}</td>
-                    </tr>
-                    ` : ''}
-                    ${isRetired && (absence > 0 || sickLeave > 0) ? `
-                    <tr>
-                        <td>Devamsızlık+Rapor (Ücretsiz İzin)</td>
-                        <td>${absence + sickLeave}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><em>Not: Emekli çalışanlarda yıllık izin dışındaki tüm devamsızlıklar ücretsiz izin olarak hesaplanmıştır.</em></td>
-                    </tr>
-                    ` : ''}
-                    ${(annualLeave === 0 && unpaidLeave === 0 && absence === 0 && sickLeave === 0) ? `
-                    <tr>
-                        <td colspan="2">Bu ay için kaydedilmiş izin/devamsızlık bilgisi bulunmamaktadır.</td>
-                    </tr>
-                    ` : ''}
+                    <thead>
+                        <tr>
+                            <th>İzin Türü</th>
+                            <th>Gün</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${annualLeave > 0 ? `
+                        <tr>
+                            <td data-label="İzin Türü">Yıllık İzin</td>
+                            <td data-label="Gün">${annualLeave}</td>
+                        </tr>
+                        ` : ''}
+                        ${unpaidLeave > 0 ? `
+                        <tr>
+                            <td data-label="İzin Türü">Ücretsiz İzin</td>
+                            <td data-label="Gün">${unpaidLeave}</td>
+                        </tr>
+                        ` : ''}
+                        ${effectiveUnpaidLeave > unpaidLeave ? `
+                        <tr>
+                            <td data-label="İzin Türü">Toplam Ücretsiz İzin Etkisi</td>
+                            <td data-label="Gün">${effectiveUnpaidLeave}</td>
+                        </tr>
+                        <tr>
+                            <td data-label="İzin Türü">Çalışılan Gün</td>
+                            <td data-label="Gün">${workDaysAfterUnpaidLeave} (${workDays} - ${effectiveUnpaidLeave})</td>
+                        </tr>
+                        ` : effectiveUnpaidLeave > 0 ? `
+                        <tr>
+                            <td data-label="İzin Türü">Çalışılan Gün</td>
+                            <td data-label="Gün">${workDaysAfterUnpaidLeave} (${workDays} - ${effectiveUnpaidLeave})</td>
+                        </tr>
+                        ` : ''}
+                        ${!isRetired && absence > 0 ? `
+                        <tr>
+                            <td data-label="İzin Türü">Devamsızlık</td>
+                            <td data-label="Gün">${absence}</td>
+                        </tr>
+                        ` : ''}
+                        ${!isRetired && sickLeave > 0 ? `
+                        <tr>
+                            <td data-label="İzin Türü">Raporlu / Hastalık İzni</td>
+                            <td data-label="Gün">${sickLeave}</td>
+                        </tr>
+                        ` : ''}
+                        ${isRetired && (absence > 0 || sickLeave > 0) ? `
+                        <tr>
+                            <td data-label="İzin Türü">Devamsızlık+Rapor (Ücretsiz İzin)</td>
+                            <td data-label="Gün">${absence + sickLeave}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" data-label="Not"><em>Not: Emekli çalışanlarda yıllık izin dışındaki tüm devamsızlıklar ücretsiz izin olarak hesaplanmıştır.</em></td>
+                        </tr>
+                        ` : ''}
+                        ${(annualLeave === 0 && unpaidLeave === 0 && absence === 0 && sickLeave === 0) ? `
+                        <tr>
+                            <td colspan="2" data-label="Bilgi">Bu ay için kaydedilmiş izin/devamsızlık bilgisi bulunmamaktadır.</td>
+                        </tr>
+                        ` : ''}
+                    </tbody>
                 </table>
             </div>
             

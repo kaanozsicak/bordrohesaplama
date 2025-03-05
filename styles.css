@@ -722,75 +722,99 @@ input[type="number"] {
         border: none;
         border-bottom: 1px solid var(--form-section-border);
         position: relative;
-        padding: 10px;
+        padding: 12px 10px;
         white-space: normal;
         line-height: 1.5;
-        gap: 5px;
+        gap: 8px;
         background-color: var(--card-bg); /* Ensure consistent background */
     }
     
-    /* Improve styling for the summary row on mobile */
-    .tax-breakdown .summary-row {
-        background-color: rgba(58, 110, 165, 0.1);
+    .tax-breakdown td:before {
+        content: attr(data-label);
+        font-weight: 600;
+        display: block;
+        color: var(--primary-color);
+        margin-bottom: 5px;
+        font-size: 0.9rem;
     }
     
-    .tax-breakdown .summary-row td {
-        background-color: transparent; /* Override the td background */
-        font-weight: bold;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px;
+    /* Fix spacing and layout for each row */
+    .tax-breakdown tr {
+        margin-bottom: 10px;
     }
     
-    /* Hide the colspan label on mobile for the summary row */
+    /* Hide unused data-label for summary row */
     .tax-breakdown .summary-row td[colspan]:before {
-        content: "Toplam Gelir Vergisi"; /* Always show this text instead of using attr(data-label) */
-        margin-bottom: 0;
+        content: "Toplam Gelir Vergisi";
     }
     
-    /* Make bracket display consistent */
-    .tax-breakdown td[data-label="Vergi Dilimi"],
-    .tax-breakdown td[data-label="Oran"],
-    .tax-breakdown td[data-label="Vergilenebilir Gelir"],
-    .tax-breakdown td[data-label="Hesaplanan Vergi"] {
-        background-color: var(--card-bg);
+    .tax-breakdown .summary-row td:not([colspan]):before {
+        content: "Toplam";
     }
     
-    .tax-details::after {
-        display: none; /* Remove scroll indicator for very small screens */
-    }
-    
-    /* Make all tables more mobile-friendly */
+    /* Make all mobile tables more readable */
     .income-section table,
     .deduction-section table,
     .summary-section table,
     .absence-section table {
-        font-size: 0.9rem;
+        border: none;
     }
     
-    .income-section td, 
-    .deduction-section td,
-    .summary-section td {
-        padding: 8px 4px;
-        font-size: 0.9rem;
-    }
-    
-    /* Fix the next bracket info layout */
-    .tax-details p {
-        font-size: 0.9rem;
-        word-break: break-word;
-    }
-    
-    .tax-details p strong {
-        display: inline-block;
-        margin-top: 3px;
-    }
-    
-    .tax-breakdown td:before {
-        margin-bottom: 8px;
-        padding-bottom: 4px;
-        border-bottom: 1px dashed var(--border-color);
-        width: 100%;
+    /* Style all mobile tables similarly to tax breakdown */
+    @media (max-width: 380px) {
+        .income-section table thead,
+        .deduction-section table thead,
+        .summary-section table thead,
+        .absence-section table thead {
+            display: none;
+        }
+        
+        .income-section table tr,
+        .deduction-section table tr,
+        .summary-section table tr,
+        .absence-section table tr {
+            display: block;
+            margin-bottom: 10px;
+            border: 1px solid var(--form-section-border);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .income-section table td,
+        .deduction-section table td,
+        .summary-section table td,
+        .absence-section table td {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            border: none;
+            border-bottom: 1px solid var(--form-section-border);
+            padding: 10px;
+            white-space: normal;
+        }
+        
+        .income-section table td:before,
+        .deduction-section table td:before,
+        .summary-section table td:before,
+        .absence-section table td:before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .income-section table td:last-child,
+        .deduction-section table td:last-child,
+        .summary-section table td:last-child,
+        .absence-section table td:last-child {
+            border-bottom: none;
+        }
+        
+        .total-row td[colspan]:before,
+        .grand-total td:before {
+            font-weight: 700;
+            font-size: 1rem;
+        }
     }
 }
