@@ -91,65 +91,89 @@ document.addEventListener('DOMContentLoaded', () => {
         let currentTaxDetails = [];
         let hasMultipleBrackets = false;
         
-        // Starting position based on previous income
-        let currentTaxBracketIndex = 0;
-        let incomeInCurrentBracket = previousIncome;
+        // Calculate total income (current month + previous months)
+        const totalCumulativeIncome = previousIncome + monthlyIncome;
         
-        // Find which tax bracket the previous income falls into
+        // Find starting tax bracket based on previous income
+        let currentTaxBracketIndex = 0;
+        
+        // Determine which tax bracket the previous income falls into
         for (let i = 0; i < taxBrackets.length; i++) {
             if (previousIncome < taxBrackets[i].limit) {
                 currentTaxBracketIndex = i;
-                incomeInCurrentBracket = previousIncome;
                 break;
-            } else {
-                incomeInCurrentBracket = previousIncome - (i > 0 ? taxBrackets[i-1].limit : 0);
             }
         }
         
-        // Add the remaining income to each bracket as necessary
-        let totalProcessedIncome = 0;
-        while (remainingIncome > 0 && currentTaxBracketIndex < taxBrackets.length) {
+        // Copy the original monthlyIncome for tracking
+        let processedIncome = 0;
+        
+        // Process each tax bracket starting from the bracket where previous income ends
+        while (processedIncome < monthlyIncome && currentTaxBracketIndex < taxBrackets.length) {
             const bracket = taxBrackets[currentTaxBracketIndex];
-            const prevLimit = currentTaxBracketIndex > 0 ? taxBrackets[currentTaxBracketIndex - 1].limit : 0;
-            const bracketCapacity = bracket.limit - prevLimit;
-            const availableInBracket = bracketCapacity - incomeInCurrentBracket;
+            const prevBracketLimit = currentTaxBracketIndex > 0 ? taxBrackets[currentTaxBracketIndex - 1].limit : 0;
             
-            const taxableInThisBracket = Math.min(remainingIncome, availableInBracket);
-            const taxForThisBracket = taxableInThisBracket * bracket.rate;
+            // Calculate how much of the current bracket is available
+            // This is: (current bracket upper limit) - (previous income OR previous bracket limit, whichever is higher)
+            const startPoint = Math.max(previousIncome, prevBracketLimit);
+            const availableInBracket = bracket.limit - startPoint;
             
-            if (taxableInThisBracket > 0) {
+            // How much income falls into this bracket (cannot exceed what's available or remaining)
+            const incomeInThisBracket = Math.min(availableInBracket, monthlyIncome - processedIncome);
+            
+            if (incomeInThisBracket > 0) {
+                // Calculate tax for this portion
+                const taxForThisBracket = incomeInThisBracket * bracket.rate;
+                
+                // Add to the total tax and record the details
+                totalTax += taxForThisBracket;
                 currentTaxDetails.push({
                     bracket: currentTaxBracketIndex,
                     rate: bracket.rate,
-                    income: taxableInThisBracket,
+                    income: incomeInThisBracket,
                     tax: taxForThisBracket,
-                    bracketStart: prevLimit,
+                    bracketStart: prevBracketLimit,
                     bracketEnd: bracket.limit
                 });
+                
+                // If we process income in more than one bracket, set the flag
+                if (processedIncome > 0) {
+                    hasMultipleBrackets = true;
+                }
+                
+                // Update processed income amount
+                processedIncome += incomeInThisBracket;
             }
             
-            totalTax += taxForThisBracket;
-            totalProcessedIncome += taxableInThisBracket;
-            remainingIncome -= taxableInThisBracket;
-            
-            // Move to next bracket
+            // Move to the next tax bracket
             currentTaxBracketIndex++;
-            incomeInCurrentBracket = 0;
+        }
+        
+        // Safety check - if we didn't process all income (should never happen)
+        if (processedIncome < monthlyIncome) {
+            const remainingAmount = monthlyIncome - processedIncome;
+            const taxOnRemaining = remainingAmount * taxBrackets[taxBrackets.length - 1].rate;
             
-            // Check if there are multiple brackets
-            if (remainingIncome > 0 && currentTaxBracketIndex < taxBrackets.length) {
-                hasMultipleBrackets = true;
-            }
+            totalTax += taxOnRemaining;
+            currentTaxDetails.push({
+                bracket: taxBrackets.length - 1,
+                rate: taxBrackets[taxBrackets.length - 1].rate,
+                income: remainingAmount,
+                tax: taxOnRemaining,
+                bracketStart: taxBrackets[taxBrackets.length - 2].limit,
+                bracketEnd: Infinity
+            });
         }
         
         // Calculate effective tax rate
         const effectiveTaxRate = totalTax / monthlyIncome;
         
         return {
-            totalTax, 
+            totalTax,
             effectiveTaxRate,
             taxDetails: currentTaxDetails,
-            hasMultipleBrackets
+            hasMultipleBrackets,
+            totalCumulativeIncome
         };
     }
     
@@ -262,6 +286,8 @@ document.addEventListener('DOMContentLoaded', () => {
         let rawIncomeTax = 0;
         let taxDetails = null;
         let effectiveTaxRate = taxRate;
+        let nextBracketIndex = 0;
+        let currentBracketIndex = 0;
         
         if (useProgressiveTax) {
             // Raw gelir vergisi hesapla (istisna öncesi)
@@ -269,6 +295,23 @@ document.addEventListener('DOMContentLoaded', () => {
             rawIncomeTax = taxCalculation.totalTax;
             taxDetails = taxCalculation.taxDetails;
             effectiveTaxRate = taxCalculation.effectiveTaxRate;
+            
+            // Determine current tax bracket
+            for (let i = 0; i < taxBrackets.length; i++) {
+                if (cumulativeIncome < taxBrackets[i].limit) {
+                    currentBracketIndex = i;
+                    break;
+                }
+            }
+            
+            // Determine next tax bracket after this month
+            const totalCumulativeIncome = cumulativeIncome + rawTaxBase;
+            for (let i = 0; i < taxBrackets.length; i++) {
+                if (totalCumulativeIncome < taxBrackets[i].limit) {
+                    nextBracketIndex = i;
+                    break;
+                }
+            }
         } else {
             // Sabit oran ile raw vergi hesapla
             rawIncomeTax = rawTaxBase * taxRate;
@@ -331,37 +374,35 @@ document.addEventListener('DOMContentLoaded', () => {
         // Generate tax breakdown HTML if we're using progressive tax
         let taxBreakdownHTML = '';
         if (useProgressiveTax && taxDetails && taxDetails.length > 0) {
-            // Calculate which tax bracket the employee will be in next month
             const totalCumulativeIncomeAfterThisMonth = cumulativeIncome + rawTaxBase;
-            let nextMonthBracket = "1. dilim (%15)";
-            let nextMonthBracketRate = 15;
-            let nextBracketIndex = 0; // Track current bracket index
             
-            // Determine which tax bracket they'll be in next month
-            if (totalCumulativeIncomeAfterThisMonth >= taxBrackets[3].limit) {
-                nextMonthBracket = "5. dilim (%40)";
-                nextMonthBracketRate = 40;
-                nextBracketIndex = 4; // Last bracket
-            } else if (totalCumulativeIncomeAfterThisMonth >= taxBrackets[2].limit) {
-                nextMonthBracket = "4. dilim (%35)";
-                nextMonthBracketRate = 35;
-                nextBracketIndex = 3;
-            } else if (totalCumulativeIncomeAfterThisMonth >= taxBrackets[1].limit) {
-                nextMonthBracket = "3. dilim (%27)";
-                nextMonthBracketRate = 27;
-                nextBracketIndex = 2;
-            } else if (totalCumulativeIncomeAfterThisMonth >= taxBrackets[0].limit) {
-                nextMonthBracket = "2. dilim (%20)";
-                nextMonthBracketRate = 20;
-                nextBracketIndex = 1;
-            } else {
-                nextBracketIndex = 0;
+            // Determine current bracket name and next bracket name based on indices
+            let currentBracketName = "1. dilim (%15)";
+            let nextMonthBracket = "1. dilim (%15)";
+            
+            if (currentBracketIndex === 1) {
+                currentBracketName = "2. dilim (%20)";
+            } else if (currentBracketIndex === 2) {
+                currentBracketName = "3. dilim (%27)";
+            } else if (currentBracketIndex === 3) {
+                currentBracketName = "4. dilim (%35)";
+            } else if (currentBracketIndex === 4) {
+                currentBracketName = "5. dilim (%40)";
             }
             
-            // Calculate how much more income until the next tax bracket (if not already at highest)
+            if (nextBracketIndex === 1) {
+                nextMonthBracket = "2. dilim (%20)";
+            } else if (nextBracketIndex === 2) {
+                nextMonthBracket = "3. dilim (%27)";
+            } else if (nextBracketIndex === 3) {
+                nextMonthBracket = "4. dilim (%35)";
+            } else if (nextBracketIndex === 4) {
+                nextMonthBracket = "5. dilim (%40)";
+            }
+            
+            // Calculate how much more income until the next tax bracket
             let nextBracketInfo = "";
             if (nextBracketIndex < 4) { // If not in the highest bracket
-                // Get the NEXT bracket's threshold and rate
                 const nextBracketThreshold = taxBrackets[nextBracketIndex].limit;
                 const nextBracketRate = taxBrackets[nextBracketIndex + 1].rate;
                 const amountUntilNextBracket = nextBracketThreshold - totalCumulativeIncomeAfterThisMonth;
@@ -378,6 +419,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p>İşsizlik Sigortası İşçi Payı: -${formatMoney(unemploymentEmployeeDeduction)} TL</p>
                     <p><strong>Gelir Vergisi Matrahı:</strong> ${formatMoney(rawTaxBase)} TL</p>
                     <p>Yıl içi toplam vergi matrahı (önceki aylar): ${formatMoney(cumulativeIncome)} TL</p>
+                    <p>Önceki vergi diliminiz: ${currentBracketName}</p>
                     <p>Bu ayın sonundaki toplam vergi matrahı: ${formatMoney(cumulativeIncome + rawTaxBase)} TL</p>
                     <p><strong>Gelecek ay başlangıcındaki vergi diliminiz:</strong> ${nextMonthBracket}</p>
                     ${nextBracketInfo}
