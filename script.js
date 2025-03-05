@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Get basic employee information
         const name = document.getElementById('name').value;
         const hourlyRate = parseFloat(document.getElementById('hourlyRate').value);
-        const workHours = parseFloat(document.getElementById('workHours').value);
+        const workDays = parseFloat(document.getElementById('workDays').value);
         const weekendHours = parseFloat(document.getElementById('weekendHours').value) || 0;
         const nightShiftHours = parseFloat(document.getElementById('nightShiftHours').value) || 0;
         const taxRate = parseFloat(document.getElementById('taxRate').value) / 100;
@@ -200,15 +200,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const daysInMonth = 30; // Standard for payroll calculations
         const workDaysInMonth = 22; // Average work days in a month (excluding weekends)
         
-        // Calculate total absence days and their effect
-        const absenceReductionRatio = effectiveUnpaidLeave / daysInMonth;
-        const absenceReductionHours = workHours * absenceReductionRatio;
+        // Calculate total working hours (from days)
+        // We need to subtract unpaid leave directly from working days
+        const workDaysAfterUnpaidLeave = Math.max(0, workDays - effectiveUnpaidLeave);
+        const totalWorkHours = workDaysAfterUnpaidLeave * dailyWorkHours;
         
-        // Calculate actual hours worked (annual leave doesn't reduce work hours)
-        const actualWorkHours = workHours - absenceReductionHours;
+        // Calculate annual leave hours
+        const annualLeaveHours = annualLeave * dailyWorkHours;
+        
+        // Actual hours worked - now simply totalWorkHours without annual leave hours
+        const actualWorkHours = totalWorkHours - annualLeaveHours;
         
         // Calculate annual leave pay (full pay for annual leave days)
-        const annualLeaveHours = annualLeave * dailyWorkHours;
         const annualLeavePay = annualLeaveHours * hourlyRate;
         
         // Calculate income components
@@ -334,18 +337,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 <table>
                     <tr>
                         <th>Tanım</th>
-                        <th>Saat / Adet</th>
+                        <th>Gün / Saat / Adet</th>
                         <th>Tutar (TL)</th>
                     </tr>
                     <tr>
                         <td>Normal Çalışma</td>
-                        <td>${actualWorkHours.toFixed(2)} saat</td>
+                        <td>${(actualWorkHours / dailyWorkHours).toFixed(2)} gün (${actualWorkHours.toFixed(2)} saat)</td>
                         <td>${formatMoney(baseSalary)}</td>
                     </tr>
                     ${annualLeave > 0 ? `
                     <tr>
                         <td>Yıllık İzin</td>
-                        <td>${annualLeaveHours.toFixed(2)} saat</td>
+                        <td>${annualLeave.toFixed(2)} gün (${annualLeaveHours.toFixed(2)} saat)</td>
                         <td>${formatMoney(annualLeavePay)}</td>
                     </tr>
                     ` : ''}
@@ -494,6 +497,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     <tr>
                         <td>Ücretsiz İzin</td>
                         <td>${unpaidLeave}</td>
+                    </tr>
+                    ` : ''}
+                    ${effectiveUnpaidLeave > unpaidLeave ? `
+                    <tr>
+                        <td>Toplam Ücretsiz İzin Etkisi</td>
+                        <td>${effectiveUnpaidLeave}</td>
+                    </tr>
+                    <tr>
+                        <td>Çalışılan Gün</td>
+                        <td>${workDaysAfterUnpaidLeave} (${workDays} - ${effectiveUnpaidLeave})</td>
+                    </tr>
+                    ` : effectiveUnpaidLeave > 0 ? `
+                    <tr>
+                        <td>Çalışılan Gün</td>
+                        <td>${workDaysAfterUnpaidLeave} (${workDays} - ${effectiveUnpaidLeave})</td>
                     </tr>
                     ` : ''}
                     ${!isRetired && absence > 0 ? `
