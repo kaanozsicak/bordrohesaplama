@@ -50,9 +50,11 @@
                     <small>Normal şartlarda aylık çalışma günü 30 gündür. Her gün için 7.5 saat hesaplanacaktır.</small>
                 </div>
                 
+                <!-- Hafta Sonu Çalışma gösterimini güncelleme -->
                 <div class="form-group">
                     <label for="weekendHours">Hafta Sonu Çalışma Saati:</label>
                     <input type="number" id="weekendHours" value="30" min="0" max="60" step="0.5" placeholder="Örn: 30">
+                    <small>Hafta sonu çalışma saatleri, normal mesai ücretinden ödenir ve toplam çalışma saatinden düşülür.</small>
                 </div>
                 
                 <div class="form-group">
@@ -88,6 +90,13 @@
                         <li>4.300.000 TL ve üstü: %40 vergi oranı</li>
                     </ul>
                 </div>
+                
+                <div class="info-box">
+                    <h4>2025 Asgari Ücret Bilgileri</h4>
+                    <p>Brüt Asgari Ücret: <span class="highlight">26.005,00 TL</span></p>
+                    <p>Net Asgari Ücret: <span class="highlight">22.104,00 TL</span></p>
+                    <small>Asgari ücret gelir vergisi ve damga vergisi istisnaları hesaplamalarda otomatik olarak uygulanmaktadır.</small>
+                </div>
             </div>
             
             <!-- Devamsızlık Bilgileri -->
@@ -95,24 +104,25 @@
                 <h3>Devamsızlık ve İzin Bilgileri</h3>
                 
                 <div class="form-group">
-                    <label for="annualLeave">Yıllık İzin (Gün):</label>
-                    <input type="number" id="annualLeave" value="0" min="0" max="30" step="0.5" placeholder="Örn: 5">
-                    <small>Yıllık izin devamsızlık olarak değerlendirilmez, ücret tam ödenir.</small>
+                    <label for="annualLeave">Yıllık İzin (Saat):</label>
+                    <input type="number" id="annualLeave" value="0" min="0" max="225" step="0.5" placeholder="Örn: 37.5">
+                    <small>Yıllık izin devamsızlık olarak değerlendirilmez, ücret tam ödenir. (Tam gün için 7.5 saat)</small>
                 </div>
                 
                 <div class="form-group">
-                    <label for="unpaidLeave">Ücretsiz İzin (Gün):</label>
-                    <input type="number" id="unpaidLeave" value="0" min="0" max="30" step="0.5" placeholder="Örn: 3.5">
+                    <label for="unpaidLeave">Ücretsiz İzin (Saat):</label>
+                    <input type="number" id="unpaidLeave" value="0" min="0" max="225" step="0.5" placeholder="Örn: 15">
+                    <small>Tam günlük izinler için 7.5 saat olarak hesaplayınız.</small>
                 </div>
                 
                 <div class="form-group">
-                    <label for="absence">Devamsızlık (Gün):</label>
-                    <input type="number" id="absence" value="0" min="0" max="30" step="0.5" placeholder="Örn: 0">
+                    <label for="absence">Devamsızlık (Saat):</label>
+                    <input type="number" id="absence" value="0" min="0" max="225" step="0.5" placeholder="Örn: 0">
                 </div>
                 
                 <div class="form-group">
-                    <label for="sickLeave">Raporlu / Hastalık İzni (Gün):</label>
-                    <input type="number" id="sickLeave" value="0" min="0" max="30" step="0.5" placeholder="Örn: 0">
+                    <label for="sickLeave">Raporlu / Hastalık İzni (Saat):</label>
+                    <input type="number" id="sickLeave" value="0" min="0" max="225" step="0.5" placeholder="Örn: 0">
                 </div>
                 
                 <div id="retiredAbsenceWarning" class="warning-message hidden">
