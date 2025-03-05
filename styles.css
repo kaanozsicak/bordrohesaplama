@@ -726,30 +726,35 @@ input[type="number"] {
         white-space: normal;
         line-height: 1.5;
         gap: 5px;
+        background-color: var(--card-bg); /* Ensure consistent background */
     }
     
-    .tax-breakdown td:last-child {
-        border-bottom: none;
-    }
-    
-    .tax-breakdown td:before {
-        content: attr(data-label);
-        font-weight: 600;
-        display: block;
-        color: var(--primary-color);
-        margin-bottom: 5px;
+    /* Improve styling for the summary row on mobile */
+    .tax-breakdown .summary-row {
+        background-color: rgba(58, 110, 165, 0.1);
     }
     
     .tax-breakdown .summary-row td {
-        background-color: rgba(58, 110, 165, 0.1);
+        background-color: transparent; /* Override the td background */
         font-weight: bold;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
+        padding: 12px;
     }
     
-    .tax-breakdown .summary-row td:before {
+    /* Hide the colspan label on mobile for the summary row */
+    .tax-breakdown .summary-row td[colspan]:before {
+        content: "Toplam Gelir Vergisi"; /* Always show this text instead of using attr(data-label) */
         margin-bottom: 0;
+    }
+    
+    /* Make bracket display consistent */
+    .tax-breakdown td[data-label="Vergi Dilimi"],
+    .tax-breakdown td[data-label="Oran"],
+    .tax-breakdown td[data-label="Vergilenebilir Gelir"],
+    .tax-breakdown td[data-label="Hesaplanan Vergi"] {
+        background-color: var(--card-bg);
     }
     
     .tax-details::after {
@@ -781,10 +786,7 @@ input[type="number"] {
         display: inline-block;
         margin-top: 3px;
     }
-}
-
-/* Even smaller screens */
-@media (max-width: 380px) {
+    
     .tax-breakdown td:before {
         margin-bottom: 8px;
         padding-bottom: 4px;

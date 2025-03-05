@@ -335,17 +335,13 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <tr>
                                     <td data-label="Vergi Dilimi">${formatMoney(detail.bracketStart)} TL - ${detail.bracketEnd === Infinity ? 'Üzeri' : formatMoney(detail.bracketEnd) + ' TL'}</td>
                                     <td data-label="Oran">%${(detail.rate * 100).toFixed(0)}</td>
-                                    <td data-label="Vergilenebilir Gelir">
-                                        ${formatMoney(detail.income)} ₺
-                                    </td>
-                                    <td data-label="Hesaplanan Vergi">
-                                        ${formatMoney(detail.tax)} ₺
-                                    </td>
+                                    <td data-label="Vergilenebilir Gelir">${formatMoney(detail.income)} ₺</td>
+                                    <td data-label="Hesaplanan Vergi">${formatMoney(detail.tax)} ₺</td>
                                 </tr>
                             `).join('')}
                             <tr class="summary-row">
-                                <td colspan="3" data-label="Toplam Gelir Vergisi"><strong>Toplam Gelir Vergisi</strong></td>
-                                <td data-label="Toplam"><strong>${formatMoney(incomeTax)} ₺</strong></td>
+                                <td colspan="3" data-label=""><strong>Toplam Gelir Vergisi</strong></td>
+                                <td data-label=""><strong>${formatMoney(incomeTax)} ₺</strong></td>
                             </tr>
                         </tbody>
                     </table>
