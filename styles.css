@@ -712,16 +712,20 @@ input[type="number"] {
         border: 1px solid var(--form-section-border);
         border-radius: 6px;
         overflow: hidden;
+        background-color: var(--card-bg);
     }
     
     .tax-breakdown td {
-        display: block;
-        text-align: right;
+        display: flex;
+        flex-direction: column;
+        text-align: left;
         border: none;
         border-bottom: 1px solid var(--form-section-border);
         position: relative;
-        padding-left: 50%;
+        padding: 10px;
         white-space: normal;
+        line-height: 1.5;
+        gap: 5px;
     }
     
     .tax-breakdown td:last-child {
@@ -730,20 +734,61 @@ input[type="number"] {
     
     .tax-breakdown td:before {
         content: attr(data-label);
-        position: absolute;
-        left: 10px;
-        top: 10px;
         font-weight: 600;
-        text-align: left;
+        display: block;
+        color: var(--primary-color);
+        margin-bottom: 5px;
+    }
+    
+    .tax-breakdown .summary-row td {
+        background-color: rgba(58, 110, 165, 0.1);
+        font-weight: bold;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .tax-breakdown .summary-row td:before {
+        margin-bottom: 0;
     }
     
     .tax-details::after {
         display: none; /* Remove scroll indicator for very small screens */
     }
     
-    .summary-row td {
-        text-align: center;
-        font-weight: bold;
-        padding-left: 6px;
+    /* Make all tables more mobile-friendly */
+    .income-section table,
+    .deduction-section table,
+    .summary-section table,
+    .absence-section table {
+        font-size: 0.9rem;
+    }
+    
+    .income-section td, 
+    .deduction-section td,
+    .summary-section td {
+        padding: 8px 4px;
+        font-size: 0.9rem;
+    }
+    
+    /* Fix the next bracket info layout */
+    .tax-details p {
+        font-size: 0.9rem;
+        word-break: break-word;
+    }
+    
+    .tax-details p strong {
+        display: inline-block;
+        margin-top: 3px;
+    }
+}
+
+/* Even smaller screens */
+@media (max-width: 380px) {
+    .tax-breakdown td:before {
+        margin-bottom: 8px;
+        padding-bottom: 4px;
+        border-bottom: 1px dashed var(--border-color);
+        width: 100%;
     }
 }
