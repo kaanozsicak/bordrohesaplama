@@ -647,3 +647,103 @@ input[type="number"] {
         margin: 0 auto;
     }
 }
+
+/* Improve tax breakdown table responsiveness */
+@media (max-width: 768px) {
+    .tax-breakdown {
+        font-size: 0.85rem;
+    }
+    
+    .tax-breakdown th,
+    .tax-breakdown td {
+        padding: 8px 6px;
+    }
+    
+    /* Create a mobile-friendly layout for the tax breakdown table */
+    .tax-details .tax-breakdown {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        max-width: 100%;
+    }
+    
+    /* Add horizontal scroll indicator */
+    .tax-details {
+        position: relative;
+    }
+    
+    .tax-details::after {
+        content: "← Kaydırabilirsiniz →";
+        position: absolute;
+        bottom: 5px;
+        right: 10px;
+        font-size: 0.75rem;
+        color: var(--primary-color);
+        opacity: 0.7;
+        background-color: rgba(255, 255, 255, 0.7);
+        padding: 2px 6px;
+        border-radius: 4px;
+        pointer-events: none;
+    }
+    
+    /* Improve other mobile rendering */
+    .income-section th, .income-section td,
+    .deduction-section th, .deduction-section td,
+    .summary-section th, .summary-section td {
+        padding: 8px 6px;
+    }
+}
+
+/* Add a more mobile-friendly alternative for very small screens */
+@media (max-width: 480px) {
+    .tax-breakdown {
+        border-spacing: 0;
+        border: none;
+    }
+    
+    .tax-breakdown thead {
+        display: none; /* Hide the header on very small screens */
+    }
+    
+    .tax-breakdown tr {
+        display: block;
+        margin-bottom: 15px;
+        border: 1px solid var(--form-section-border);
+        border-radius: 6px;
+        overflow: hidden;
+    }
+    
+    .tax-breakdown td {
+        display: block;
+        text-align: right;
+        border: none;
+        border-bottom: 1px solid var(--form-section-border);
+        position: relative;
+        padding-left: 50%;
+        white-space: normal;
+    }
+    
+    .tax-breakdown td:last-child {
+        border-bottom: none;
+    }
+    
+    .tax-breakdown td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 10px;
+        top: 10px;
+        font-weight: 600;
+        text-align: left;
+    }
+    
+    .tax-details::after {
+        display: none; /* Remove scroll indicator for very small screens */
+    }
+    
+    .summary-row td {
+        text-align: center;
+        font-weight: bold;
+        padding-left: 6px;
+    }
+}
