@@ -1,6 +1,6 @@
 # Bordro Hesaplama Uygulaması
 
-Bu uygulama, babam için hazırladığım 2025 yılı Türkiye vergi sistemine göre çalışan maaş bordro hesaplamalarını kolaylaştıran bir araçtır. Babam için hazırladığım için Bosch Bursa fabrikası dışındaki bir özel şirkette çalışan kişiler için kesinlik sunmamaktadır. Asgari ücret istisnalarını ve gelir vergisi dilimlerini otomatik hesaplar.
+Bu uygulama, babam için hazırladığım 2025 yılı Türkiye vergi sistemine göre çalışan maaş bordro hesaplamalarını kolaylaştıran bir araçtır. Babam için hazırladığım için Bosch Bursa fabrikası dışında çalışan kişiler için kesinlik sunmamaktadır. Asgari ücret istisnalarını ve gelir vergisi dilimlerini otomatik hesaplar.
 
 ## Özellikler
 
